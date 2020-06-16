@@ -8,19 +8,16 @@
 # -------------------------------------------------------------------
 # - EDITORIAL:   2018-10-11, RS: Created file on thinkreto.
 # -------------------------------------------------------------------
-# - L@ST MODIFIED: 2020-06-16 12:05 on marvin
+# - L@ST MODIFIED: 2020-06-16 12:51 on marvin
 # -------------------------------------------------------------------
 
 # List of the required parameters. Check the index file
 # to see the available parameters. Always <param>:<level> where
 # <param> and <level> are the strings as in the grib index file.
 # Import some required packages
-import sys, os, re
-import argparse, sys
-import datetime as dt
-import numpy as np
-import distutils.spawn
-import subprocess as sub
+import sys
+import os
+import argparse
 
 # Loading custom functions from the 'functions' python script
 import functions
@@ -41,20 +38,9 @@ if __name__ == "__main__":
     # Parsing input args
     # ----------------------------
     parser = argparse.ArgumentParser(description="Download some HRRR data")
-    parser.add_argument("--domain","-d", type = str, default = "conus",
-               help = "Which domain to download. Defualt is 'conus'.")
     parser.add_argument("--config","-c", type = str, default = "config.conf",
                help = "Name of the config file to be read. Default is 'config.conf'.")
     args = vars(parser.parse_args())
-
-    # ----------------------------
-    # Input checks
-    # ----------------------------
-    # Check domain
-    domains_allowed = ["conus", "alaska"]
-    if not args["domain"] in domains_allowed:
-        raise ValueError("--domain/-d must be in {:s}".format(", ".join(domains_allowed)))
-
 
     # ----------------------------
     # Important step: Read the config file.

@@ -7,7 +7,7 @@
 # -------------------------------------------------------------------
 # - EDITORIAL:   2020-06-16: Adaption of a GFS downloader ...
 # -------------------------------------------------------------------
-# - L@ST MODIFIED: 2020-06-16 12:11 on marvin
+# - L@ST MODIFIED: 2020-06-16 12:26 on marvin
 # -------------------------------------------------------------------
 
 
@@ -83,7 +83,8 @@ class get_gribfiles_on_server:
             if match(r"^hrrr\..*\.grib2$", node.text):
                 tmp = gribfile(self.config, dir, node.text)
                 if tmp.get("step") in self.config.steps and \
-                   tmp.get("runhour") in self.config.runhours:
+                   tmp.get("runhour") in self.config.runhours and \
+                   tmp.get("type") in self.config._types:
                        result.append(tmp)
 
         return result
@@ -132,7 +133,7 @@ class gribfile:
 
         # Extracting runhour, type, and forecast step
         from re import match
-        tmp = match(r"^hrrr\.t([0-9]+)z\.([a-z]+)([0-9]+)\.grib2$", file)
+        tmp = match(r"^hrrr\.t([0-9]+)z\.([a-z]+)f([0-9]+)\.grib2$", file)
         self.runhour = int(tmp.group(1))
         self.type    = tmp.group(2)
         self.step    = int(tmp.group(3))
@@ -645,6 +646,7 @@ class read_config():
         res += "   Forecast steps:            {:s}\n".format(", ".join([str(x) for x in self.steps]))
         res += "   Forecast runhours:         {:s}\n".format(", ".join([str(x) for x in self.runhours]))
         res += "   Where to store grib files: {:s}\n".format(self.gribdir)
+        res += "\n   Types:\n{:s}".format("".join(["   - " + x + "\n" for x in self._types]))
         res += "\n   Parameters:\n"
         for p in self.params:
             res += "   - {:10s} {:s}\n".format(p, self.params[p])
@@ -673,6 +675,7 @@ class read_config():
         self._read_gribdir(CNF)
         self._read_url(CNF)
         self._read_curl(CNF)
+        self._read_types(CNF)
 
         # If one of the required items is missing: stop
         for key in ["file", "url", "params", "steps", "runhours", "gribdir"]:
@@ -768,6 +771,14 @@ class read_config():
                 setattr(self, "curl_{:s}".format(key), CNF.getint("curl", key))
             except:
                 continue
+
+
+    def _read_types(self, CNF):
+
+        self._types = []
+        for key in CNF.items("types"):
+            tmp = CNF.getboolean("types", key[0])
+            if tmp: self._types.append(key[0])
 
 
 # -------------------------------------------------------------------
