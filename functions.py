@@ -7,7 +7,7 @@
 # -------------------------------------------------------------------
 # - EDITORIAL:   2020-06-16: Adaption of a GFS downloader ...
 # -------------------------------------------------------------------
-# - L@ST MODIFIED: 2020-06-16 12:09 on marvin
+# - L@ST MODIFIED: 2020-06-16 12:11 on marvin
 # -------------------------------------------------------------------
 
 
@@ -863,7 +863,7 @@ def download_range(config, grib, local, curlrange):
     # Rename the file (after success)
     if success:
         from shutil import move
-        move("{:s}.tmp".format(file.get("local")), file.get("local"))
+        move("{:s}.tmp".format(local), local)
 
     return success
 
